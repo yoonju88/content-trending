@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import NavBar from "@/components/nav/Nav";
+import { AuthProvider } from "@/context/auth";
 
 
 const poppins = Poppins({
@@ -24,13 +25,16 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.className}`}>
         <Providers>
-          <NavBar />
-          <main className='container py-10'>
-            {children}
-          </main>
-          <footer>
-            
-          </footer>
+          <AuthProvider>
+            <NavBar />
+
+            <main className='container py-10'>
+              {children}
+            </main>
+            <footer>
+
+            </footer>
+          </AuthProvider>
         </Providers>
       </body>
     </html>

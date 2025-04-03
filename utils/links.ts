@@ -4,5 +4,8 @@ type NavLink = {
 }
 export const links: NavLink[] = [
     { href: '/', label: 'home' },
-    { href: '/trending', label: "trending" },
+    { href: '/always', label: "Always" },
+    { href: '/coupang', label: "Coupang" },
+    { href: '/naver', label: "Naver" },
+    { href: '/smart-store', label: "Smart Store" },
 ]

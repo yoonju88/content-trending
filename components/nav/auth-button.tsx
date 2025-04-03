@@ -75,17 +75,13 @@ export default function AuthButtons() {
                 </DropdownMenu>
             ) : (
                 <div className="flex gap-2 items-center">
-                    <li>
-                        <Link href="/login" className="uppercase hover:underline tracking-widest">
-                            Login
-                        </Link>
-                    </li>
+                    <Link href="/login" className="uppercase hover:underline tracking-widest flex gap-2">
+                        LogIn
+                    </Link>
                     <div className="h-5 w-[1.5px] bg-white/50" />
-                    <li>
-                        <Link href="/register" className="uppercase hover:underline tracking-widest">
-                            Signup
-                        </Link>
-                    </li>
+                    <Link href="/register" className="uppercase hover:underline tracking-widest">
+                        Signup
+                    </Link>
                 </div>
             )}
         </>

@@ -1,4 +1,5 @@
-import ContinueWithGoogleButton from '@/components/nav/Continue-with-google'
+
+import ContinueWithGoogleButton from '@/components/nav/ContinueWithGoogleButton'
 import React from 'react'
 import {
     Card,
