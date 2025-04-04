@@ -5,12 +5,12 @@ export interface Orders {
     상품아이디: string;
     합배송아이디: string;
     주문시점: Date;
-    정산대상금: string;
+    정산대상금: number;
     수령인: string;
     수량: number;
     옵션: string;
     수령인연락처: string;
-    우편번호: string;
+    우편번호: number;
     주소: string;
     공동현관비밀번호: string;
     수령방법: string;

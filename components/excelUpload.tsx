@@ -39,23 +39,51 @@ const ExcelUpload = () => {
                 const jsonData = XLSX.utils.sheet_to_json(firstSheet);
 
                 // Transform data to match Orders type
-                const transformedData: Orders[] = jsonData.map((item: any) => ({
-                    주문아이디: item.주문아이디 || '',
-                    상품아이디: item.상품아이디 || '',
-                    합배송아이디: item.합배송아이디 || '',
-                    주문시점: new Date(item.주문시점),
-                    정산대상금: item.정산대상금 || '',
-                    수령인: item.수령인 || '',
-                    수량: Number(item.수량) || 0,
-                    옵션: item.옵션 || '',
-                    수령인연락처: item.수령인연락처 || '',
-                    우편번호: item.우편번호 || '',
-                    주소: item.주소 || '',
-                    공동현관비밀번호: item.공동현관비밀번호 || '',
-                    수령방법: item.수령방법 || '',
-                    운송장번호: item.운송장번호 || '',
-                    상태: (item.상태 as Status) || '대기중'
-                }));
+                const transformedData: Orders[] = jsonData.map((item: any) => {
+
+                    const 주문시점 = item.주문시점;
+                    let orderDate = new Date(주문시점);
+
+                    if (isNaN(orderDate.getTime())) {
+                        if (typeof 주문시점 === 'string' && 주문시점.includes(' ')) {
+                            // '2025-04-03 20:41' 형태에서 공백을 'T'로 바꿔서 ISO 형식으로 변환
+                            orderDate = new Date(주문시점.replace(' ', 'T'));
+                        } else {
+                            // 날짜가 유효하지 않다면, 기본 날짜를 설정하거나 에러 메시지를 처리할 수 있음
+                            orderDate = new Date();  // 예: 현재 날짜로 설정
+                        }
+                    }
+
+                    // 수령인연락처 처리 (핸드폰 번호의 형식을 일관되게 맞추기)
+                    let formattedPhone = item.수령인연락처;
+                    if (formattedPhone && typeof formattedPhone === 'string') {
+                        formattedPhone = formattedPhone.replace(/[^0-9]/g, '');  // 숫자만 남기고 나머지 제거
+                        if (formattedPhone.length === 10) {
+                            formattedPhone = formattedPhone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+                        } else if (formattedPhone.length === 11) {
+                            formattedPhone = formattedPhone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                        }
+                    }
+
+                    return {
+                        주문아이디: item.주문아이디 || '',
+                        상품아이디: item.상품아이디 || '',
+                        합배송아이디: item.합배송아이디 || '',
+                        주문시점: orderDate,
+                        정산대상금: Number(item.정산대상금) || 0,
+                        수령인: item.수령인 || '',
+                        수량: Number(item.수량) || 0,
+                        옵션: item.옵션 || '',
+                        수령인연락처: formattedPhone || "정보없음",
+                        우편번호: Number(item.우편번호) || 0,
+                        주소: item.주소 || '',
+                        공동현관비밀번호: item.공동현관비밀번호 || '',
+                        수령방법: item.수령방법 || '',
+                        운송장번호: item.운송장번호 || '',
+                        상태: (item.상태 as Status) || '대기중'
+                    }
+                });
+
 
                 setOrders(transformedData);
                 processExcelData(transformedData);
@@ -167,16 +195,16 @@ const ExcelUpload = () => {
                 </Button>
             </div>
             <section>
-                <Card className="w-full p-10">
+                <Card className=" group w-full p-10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500">
                     <CardHeader>
-                        <CardTitle className="text-3xl">Dash Board</CardTitle>
+                        <CardTitle className="text-3xl group-hover:text-primary">Dash Board</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-4 space-x-12 text-center">
                         {dashboardData.map((item) => {
                             return (
                                 <Card
                                     key={item.id}
-                                    className='border-none bg-muted-foreground/10'
+                                    className='border-none bg-muted-foreground/10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500'
                                 >
                                     <CardHeader>
                                         <CardTitle className="text-2xl">{item.label}</CardTitle>
@@ -211,7 +239,7 @@ const ExcelUpload = () => {
                 </div>
                 <Table className="mt-10">
                     <TableCaption>
-                        <span className="text-xl font-title">올웨이즈 주문서 데이타</span>
+                        <span className="text-xl font-title">Always orders data</span>
                     </TableCaption>
                     <TableHeader>
                         <TableRow>
@@ -230,28 +258,31 @@ const ExcelUpload = () => {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {orders.map((order) => (
-                            <TableRow key={order.주문아이디}>
-                                <TableCell>
-                                    <Input type="checkbox" />
-                                </TableCell>
-                                <TableCell>{order.주문아이디}</TableCell>
-                                <TableCell>{order.상품아이디}</TableCell>
-                                <TableCell>{order.합배송아이디}</TableCell>
-                                <TableCell>{order.주문시점.toLocaleDateString()}</TableCell>
-                                <TableCell>{order.정산대상금}</TableCell>
-                                <TableCell>{order.수령인}</TableCell>
-                                <TableCell>{order.수량}</TableCell>
-                                <TableCell>{order.옵션}</TableCell>
-                                <TableCell>{order.수령인연락처}</TableCell>
-                                <TableCell>{order.우편번호}</TableCell>
-                                <TableCell>{order.주소}</TableCell>
-                                <TableCell>{order.공동현관비밀번호}</TableCell>
-                                <TableCell>{order.수령방법}</TableCell>
-                                <TableCell>{order.운송장번호}</TableCell>
-                                <TableCell>{order.상태}</TableCell>
-                            </TableRow>
-                        ))
+                        {orders.map((order) => {
+
+                            return (
+                                <TableRow key={order.주문아이디}>
+                                    <TableCell>
+                                        <Input type="checkbox" />
+                                    </TableCell>
+                                    <TableCell>{order.주문아이디}</TableCell>
+                                    <TableCell>{order.상품아이디}</TableCell>
+                                    <TableCell>{order.합배송아이디}</TableCell>
+                                    <TableCell>{order.주문시점.toLocaleDateString()}</TableCell>
+                                    <TableCell>₩{order.정산대상금}</TableCell>
+                                    <TableCell>{order.수령인}</TableCell>
+                                    <TableCell>{order.수량}</TableCell>
+                                    <TableCell>{order.옵션}</TableCell>
+                                    <TableCell>{order.수령인연락처}</TableCell>
+                                    <TableCell>{order.우편번호}</TableCell>
+                                    <TableCell>{order.주소}</TableCell>
+                                    <TableCell>{order.공동현관비밀번호}</TableCell>
+                                    <TableCell>{order.수령방법}</TableCell>
+                                    <TableCell>{order.운송장번호}</TableCell>
+                                    <TableCell>{order.상태}</TableCell>
+                                </TableRow>
+                            )
+                        })
                         }
                     </TableBody>
                 </Table>
