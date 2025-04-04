@@ -65,7 +65,7 @@ export default function NavBar() {
                     <span className="ml-3 text-3xl text-foreground " >Tasty Auto System
                     </span>
                 </Link>
-                <div className="flex gap-5">
+                <div className="flex">
                     <AuthButtons />
                     <div className="md:mt-0 mt-6 md:ml-3 ml-0">
                         <DarkMode />

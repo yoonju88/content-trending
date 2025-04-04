@@ -12,6 +12,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
+import { Button } from "../ui/button";
 
 export default function AuthButtons() {
     const router = useRouter();
@@ -75,13 +76,16 @@ export default function AuthButtons() {
                 </DropdownMenu>
             ) : (
                 <div className="flex gap-2 items-center">
-                    <Link href="/login" className="uppercase hover:underline tracking-widest flex gap-2">
-                        LogIn
-                    </Link>
-                    <div className="h-5 w-[1.5px] bg-white/50" />
-                    <Link href="/register" className="uppercase hover:underline tracking-widest">
-                        Signup
-                    </Link>
+                    <Button variant="outline">
+                        <Link href="/login" className="tracking-widest hover:text-primary">
+                            LogIn
+                        </Link>
+                    </Button>
+                    <Button variant="outline" >
+                        <Link href="/register" className="tracking-widest hover:text-primary">
+                            SignUp
+                        </Link>
+                    </Button>
                 </div>
             )}
         </>
