@@ -26,11 +26,11 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>
             <NavBar />
-            <main className='container mx-auto min-h-screen relative p-24 flex items-center justify-center'>
+            <main className='container mx-auto min-h-screen relative  flex items-center justify-center'>
               {children}
             </main>
-            <footer className="container mx-auto text-center mt-20 bg-amber-100 p-10">
-              <p>© 2024 쇼핑몰 주문서 관리 시스템</p>
+            <footer className="container mx-auto text-center mt-20 bg-primary p-6">
+              <p className="text-white">© 2024 쇼핑몰 주문서 관리 시스템</p>
             </footer>
           </AuthProvider>
         </Providers>

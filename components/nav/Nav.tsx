@@ -60,26 +60,24 @@ export default function NavBar() {
 
     return (
         <header className="container mx-auto">
-            <div className="flex flex-wrap p-5 flex-col md:flex-row items-center mt-2 justify-between">
-                <Link href='/' className="flex title-font font-medium items-center mb-6 md:mb-0" >
-                    <span className="ml-3 text-3xl text-foreground " >Tasty Auto System
-                    </span>
-                </Link>
-                <div className="flex">
+            <div className="flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
+                <h1 className="flex title-font font-medium items-center text-3xl text-foreground hover:text-primary transition-all duration-500">
+                    <Link href='/'>
+                        Tasty Auto System
+                    </Link>
+                </h1>
+                <div className="flex items-center space-x-4">
                     <AuthButtons />
-                    <div className="md:mt-0 mt-6 md:ml-3 ml-0">
-                        <DarkMode />
-                    </div>
+                    <DarkMode />
                 </div>
             </div>
-            <nav className="relative flex items-center justify-center mt-10 p-6">
+            <nav className="relative flex items-center justify-center mt-10 p-6 bg-muted-foreground/10">
                 {/* Underline */}
                 <div
-                    className='absolute bottom-5 h-[2px] bg-primary/80'
+                    className='absolute bottom-5 h-[2px] bg-primary/80 transition-all duration-500 ease-in-out'
                     style={{
                         width: `${underline.width}px`,
                         left: `${underline.left}px`,
-                        transition: 'all 0.3s ease',
                     }}
                 />
                 <div className="flex items-center space-x-6"> {/* 링크들을 감싸는 컨테이너 추가 */}
@@ -87,7 +85,7 @@ export default function NavBar() {
                         <Link
                             key={link.label}
                             href={link.href}
-                            className={`text-foreground text-opacity-80 text-lg p-1 cursor-pointer hover:font-bold uppercase  hover:text-primary ${isActive(link.href) ? "font-bold text-primary" : "font-medium"
+                            className={`text-foreground text-opacity-80 text-lg p-1 cursor-pointer hover:font-bold uppercase transition-all duration-500  hover:text-primary ${isActive(link.href) ? "font-bold text-primary" : "font-medium"
                                 }`}
                             data-active={isActive(link.href)}
                             onMouseEnter={handleMouseEnter}
