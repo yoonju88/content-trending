@@ -12,10 +12,6 @@ interface UnderlineState {
     left: number;
 }
 
-interface LinkItem {
-    href: string;
-}
-
 export default function NavBar() {
     const pathname = usePathname() // Current page path
     const [underline, setUnderline] = useState<UnderlineState>({ width: 0, left: 0 })
@@ -54,15 +50,13 @@ export default function NavBar() {
     //check if the given link is the active page
     const isActive = (href: string): boolean => {
         if (href === '/') {
-            return pathname === '/';  // 루트 경로의 경우 정확히 일치해야 활성화
+            return pathname === '/';
         }
-        return pathname === href || pathname.startsWith(href + '/')
+        // pathname이 href로 시작하는지 확인 (서브 경로도 포함)
+        return pathname.startsWith(href);
     };
     console.log("isActive:", isActive)
-    // check if any of the links in a dropdown are active
-    const isDropDownActive = (links: LinkItem[]) => {
-        return links.some(link => pathname.startsWith(link.href));
-    };
+
 
     return (
         <header className="container mx-auto">
@@ -78,30 +72,31 @@ export default function NavBar() {
                     </div>
                 </div>
             </div>
-            <nav className="relative md:ml-auto flex flex-wrap items-center text-base justify-center gap-6 mt-10 p-6">
+            <nav className="relative flex items-center justify-center mt-10 p-6">
+                {/* Underline */}
                 <div
-                    className='absolute bottom-0 h-[2px] bg-foreground transition-all duration-500'
+                    className='absolute bottom-5 h-[2px] bg-primary/80'
                     style={{
-                        width: underline.width,
-                        left: underline.left,
+                        width: `${underline.width}px`,
+                        left: `${underline.left}px`,
+                        transition: 'all 0.3s ease',
                     }}
                 />
-                {links.map((link) => {
-                    //console.log('link.href:', link.href);
-                    console.log('isActive result:', isActive(link.href));
-                    return (
+                <div className="flex items-center space-x-6"> {/* 링크들을 감싸는 컨테이너 추가 */}
+                    {links.map((link) => (
                         <Link
                             key={link.label}
                             href={link.href}
-                            className={`text-foreground text-opacity-80 text-lg relative mr-2 p-1 cursor-pointer hover:font-bold uppercase ${isActive(link.href) ? "font-bold" : "font-medium"}`}
-                            data-active={isActive(link.href) ? "true" : "false"}
+                            className={`text-foreground text-opacity-80 text-lg p-1 cursor-pointer hover:font-bold uppercase  hover:text-primary ${isActive(link.href) ? "font-bold text-primary" : "font-medium"
+                                }`}
+                            data-active={isActive(link.href)}
                             onMouseEnter={handleMouseEnter}
                             onMouseLeave={handleMouseLeave}
                         >
                             {link.label}
                         </Link>
-                    )
-                })}
+                    ))}
+                </div>
             </nav>
         </header>
     )
