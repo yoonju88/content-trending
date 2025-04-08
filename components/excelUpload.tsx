@@ -21,80 +21,77 @@ import {
     TableHeader,
     TableRow,
 } from './ui/table';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from './ui/select'
 
 
 const ExcelUpload = () => {
     const [orders, setOrders] = useState<Orders[]>([]);
     const [dashboardData, setDashboardData] = useState(InitialDashboardItems);
+    const [duplicatedAddresses, setDuplicatedAddresses] = useState<Set<string>>(new Set());
+
     // Handle file upload and parse Excel data
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
+
         if (file) {
             const reader = new FileReader();
-
             reader.onload = (e: ProgressEvent<FileReader>) => {
                 const data = new Uint8Array(e.target?.result as ArrayBuffer);
                 const workbook = XLSX.read(data, { type: "array" });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-
-                // Transform data to match Orders type
-                const transformedData: Orders[] = jsonData.map((item: any) => {
-
-                    const 주문시점 = item.주문시점;
-                    let orderDate = new Date(주문시점);
-
-                    if (isNaN(orderDate.getTime())) {
-                        if (typeof 주문시점 === 'string' && 주문시점.includes(' ')) {
-                            // '2025-04-03 20:41' 형태에서 공백을 'T'로 바꿔서 ISO 형식으로 변환
-                            orderDate = new Date(주문시점.replace(' ', 'T'));
-                        } else {
-                            // 날짜가 유효하지 않다면, 기본 날짜를 설정하거나 에러 메시지를 처리할 수 있음
-                            orderDate = new Date();  // 예: 현재 날짜로 설정
-                        }
-                    }
-
-                    // 수령인연락처 처리 (핸드폰 번호의 형식을 일관되게 맞추기)
-                    let formattedPhone = item.수령인연락처;
-                    if (formattedPhone && typeof formattedPhone === 'string') {
-                        formattedPhone = formattedPhone.replace(/[^0-9]/g, '');  // 숫자만 남기고 나머지 제거
-                        if (formattedPhone.length === 10) {
-                            formattedPhone = formattedPhone.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-                        } else if (formattedPhone.length === 11) {
-                            formattedPhone = formattedPhone.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
-                        }
-                    }
-
-                    return {
-                        주문아이디: item.주문아이디 || '',
-                        상품아이디: item.상품아이디 || '',
-                        합배송아이디: item.합배송아이디 || '',
-                        주문시점: orderDate,
-                        정산대상금: Number(item.정산대상금) || 0,
-                        수령인: item.수령인 || '',
-                        수량: Number(item.수량) || 0,
-                        옵션: item.옵션 || '',
-                        수령인연락처: formattedPhone || "정보없음",
-                        우편번호: Number(item.우편번호) || 0,
-                        주소: item.주소 || '',
-                        공동현관비밀번호: item.공동현관비밀번호 || '',
-                        수령방법: item.수령방법 || '',
-                        운송장번호: item.운송장번호 || '',
-                        상태: (item.상태 as Status) || '대기중'
-                    }
-                });
-
-
-                setOrders(transformedData);
-                processExcelData(transformedData);
-            };
-
+                processExcelData(jsonData);
+                console.log("data", data)
+                console.log("jsonData", jsonData)
+            }
             reader.readAsArrayBuffer(file);
         }
-    };
+    }
+    // Transform data to match Orders type
+    const processExcelData = (data: any[]) => {
+        const transformedData: Orders[] = data.map((item: any) => ({
+            주문아이디: item['주문아이디'] || '',
+            상품아이디: item['상품아이디'] || '',
+            합배송아이디: item['합배송아이디'] || '',
+            주문시점: new Date(item['주문 시점']) || new Date(),
+            정산대상금액: Number(item['정산대상금액(수수료 제외)']) || 0,
+            수령인: item['수령인'] || '',
+            수량: Number(item['수량']) || 0,
+            옵션: item['옵션'] ? item['옵션'].split(':')[1]?.trim() || '' : '',
+            수령인연락처: item['수령인 연락처'] || "정보없음",
+            우편번호: Number(item['우편번호']) || 0,
+            주소: item['주소'] || '',
+            공동현관비밀번호: item['공동현관 비밀번호'] || '',
+            수령방법: item['수령 방법'] || '',
+            운송장번호: item['운송장번호'] || '',
+            상태: item['상태'] || '대기중',
+            처리상태: '대기중'
+        }));
+        // Check for duplicated addresses
+        const addressCount: { [key: string]: number } = {};
+        transformedData.forEach((order) => {
+            addressCount[order.주소] = (addressCount[order.주소] || 0) + 1;
+        });
 
-    // Process Excel data and update dashboard
-    const processExcelData = (data: Orders[]) => {
+        const duplicatedAddressesSet = new Set<string>();
+        transformedData.forEach((order) => {
+            if (addressCount[order.주소] > 1) {
+                duplicatedAddressesSet.add(order.주소); // 중복된 주소만 추가
+            }
+        });
+
+        setDuplicatedAddresses(duplicatedAddressesSet);
+        setOrders(transformedData);
+        updateDashboard(transformedData);
+    };
+    // Update dashboard data
+    const updateDashboard = (data: Orders[]) => {
         const totalOrders = data.length;
         const pendingOrders = data.filter((order) => order.상태 === "대기중").length;
         const processingOrders = data.filter((order) => order.상태 === "처리중").length;
@@ -108,21 +105,22 @@ const ExcelUpload = () => {
         ]);
     };
     // Update order status
-    const updateOrderStatus = (orderNumber: string, newStatus: Status) => {
+    const updateOrderStatus = (
+        orderNumber: string,
+        newStatus: Status
+    ) => {
         const updatedOrders = orders.map((order) =>
             order.주문아이디 === orderNumber
                 ? { ...order, 상태: newStatus }
                 : order
         );
         setOrders(updatedOrders);
-        processExcelData(updatedOrders);
+        updateDashboard(updatedOrders);
     };
 
     // Select/deselect all orders
     const toggleSelectAll = () => {
-        const checkboxes = document.querySelectorAll<HTMLInputElement>(
-            ".order-checkbox"
-        );
+        const checkboxes = document.querySelectorAll<HTMLInputElement>(".order-checkbox");
         const selectAll = document.getElementById("selectAll") as HTMLInputElement;
         checkboxes.forEach((checkbox) => {
             checkbox.checked = selectAll.checked;
@@ -152,14 +150,15 @@ const ExcelUpload = () => {
 
         navigator.clipboard.writeText(text).then(() => {
             alert("선택한 주문이 클립보드에 복사되었습니다.");
+        }).catch(err => {
+            console.error('복사 실패:', err);
+            alert('복사에 실패했습니다.');
         });
     };
 
     // Copy all orders to clipboard
     const copyAllOrders = () => {
-        const rows = document.querySelectorAll<HTMLTableRowElement>(
-            "#orderTableBody tr"
-        );
+        const rows = document.querySelectorAll<HTMLTableRowElement>("#orderTableBody tr");
         const text = Array.from(rows)
             .map((row) => {
                 const cells = Array.from(row.cells);
@@ -172,7 +171,10 @@ const ExcelUpload = () => {
 
         navigator.clipboard.writeText(text).then(() => {
             alert("전체 주문이 클립보드에 복사되었습니다.");
-        });
+        }).catch(err => {
+            console.error('복사 실패:', err);
+            alert('복사에 실패했습니다.');
+        })
     }
 
     return (
@@ -259,27 +261,50 @@ const ExcelUpload = () => {
                     </TableHeader>
                     <TableBody>
                         {orders.map((order) => {
-
+                            const isDuplicatedAddress = duplicatedAddresses.has(order.주소); // 주소가 중복된 주소인지 확인
                             return (
                                 <TableRow key={order.주문아이디}>
                                     <TableCell>
-                                        <Input type="checkbox" />
+                                        <Input
+                                            type="checkbox"
+                                            className="order-checkbox"
+                                        />
                                     </TableCell>
                                     <TableCell>{order.주문아이디}</TableCell>
                                     <TableCell>{order.상품아이디}</TableCell>
                                     <TableCell>{order.합배송아이디}</TableCell>
                                     <TableCell>{order.주문시점.toLocaleDateString()}</TableCell>
-                                    <TableCell>₩{order.정산대상금}</TableCell>
+                                    <TableCell>₩{order.정산대상금액}</TableCell>
                                     <TableCell>{order.수령인}</TableCell>
                                     <TableCell>{order.수량}</TableCell>
                                     <TableCell>{order.옵션}</TableCell>
                                     <TableCell>{order.수령인연락처}</TableCell>
                                     <TableCell>{order.우편번호}</TableCell>
-                                    <TableCell>{order.주소}</TableCell>
+                                    <TableCell>{order.주소}
+                                        {isDuplicatedAddress ?
+                                            (
+                                                <span className="text-red-500 font-extrabold">(x2)</span>
+                                            ) : (
+                                                ''
+                                            )
+                                        }
+                                    </TableCell>
                                     <TableCell>{order.공동현관비밀번호}</TableCell>
                                     <TableCell>{order.수령방법}</TableCell>
                                     <TableCell>{order.운송장번호}</TableCell>
                                     <TableCell>{order.상태}</TableCell>
+                                    <TableCell className='flex gap-2'>
+                                        <Select onValueChange={(value: Status) => updateOrderStatus(order.주문아이디, value)}>
+                                            <SelectTrigger className="w-[150px]">
+                                                <SelectValue placeholder={order.처리상태} />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="대기중">대기중</SelectItem>
+                                                <SelectItem value="처리중">처리중</SelectItem>
+                                                <SelectItem value="완료">완료</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
                                 </TableRow>
                             )
                         })
@@ -289,6 +314,6 @@ const ExcelUpload = () => {
             </section>
         </div>
     );
-};
+}
 
 export default ExcelUpload;
