@@ -16,7 +16,7 @@ export interface Orders {
     수령방법: string;
     운송장번호: string;
     상태: Status;
-    처리상태: string
+    처리상태: string;
 }
 
 export const tableHeaders = [

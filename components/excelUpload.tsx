@@ -28,6 +28,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from './ui/select'
+import { cityNames } from '@/utils/cityName'
 
 
 const ExcelUpload = () => {
@@ -53,6 +54,19 @@ const ExcelUpload = () => {
             reader.readAsArrayBuffer(file);
         }
     }
+    // 도시명 추출 함수
+    const extractCityName = (address: string): string | undefined => {
+        for (let city of cityNames) {
+            if (address.includes(city)) {
+                return city;
+            }
+        }
+        return undefined;
+    };
+    // 주소를 정리하는 함수
+    const normalizeAddress = (address: string): string => {
+        return address.trim().replace(/\s+/g, ' ');
+    };
     // Transform data to match Orders type
     const processExcelData = (data: any[]) => {
         const transformedData: Orders[] = data.map((item: any) => ({
@@ -65,7 +79,7 @@ const ExcelUpload = () => {
             수량: Number(item['수량']) || 0,
             옵션: item['옵션'] ? item['옵션'].split(':')[1]?.trim() || '' : '',
             수령인연락처: item['수령인 연락처'] || "정보없음",
-            우편번호: Number(item['우편번호']) || 0,
+            우편번호: item['우편번호']?.toString() || '',
             주소: item['주소'] || '',
             공동현관비밀번호: item['공동현관 비밀번호'] || '',
             수령방법: item['수령 방법'] || '',
@@ -73,23 +87,26 @@ const ExcelUpload = () => {
             상태: item['상태'] || '대기중',
             처리상태: '대기중'
         }));
-        // Check for duplicated addresses
-        const addressCount: { [key: string]: number } = {};
+
+        // 주소 정규화 및 카운트
+        const addressMap = new Map<string, number>();
         transformedData.forEach((order) => {
-            addressCount[order.주소] = (addressCount[order.주소] || 0) + 1;
+            const address = order.주소.trim();
+            addressMap.set(address, (addressMap.get(address) || 0) + 1);
         });
 
-        const duplicatedAddressesSet = new Set<string>();
-        transformedData.forEach((order) => {
-            if (addressCount[order.주소] > 1) {
-                duplicatedAddressesSet.add(order.주소); // 중복된 주소만 추가
+        // 중복 주소 추적
+        const duplicatedAddresses = new Set<string>();
+        addressMap.forEach((count, address) => {
+            if (count > 1) {
+                duplicatedAddresses.add(address);
             }
         });
 
-        setDuplicatedAddresses(duplicatedAddressesSet);
+        setDuplicatedAddresses(duplicatedAddresses);
         setOrders(transformedData);
         updateDashboard(transformedData);
-    };
+    }
     // Update dashboard data
     const updateDashboard = (data: Orders[]) => {
         const totalOrders = data.length;
@@ -240,9 +257,6 @@ const ExcelUpload = () => {
                     </Button>
                 </div>
                 <Table className="mt-10">
-                    <TableCaption>
-                        <span className="text-xl font-title">Always orders data</span>
-                    </TableCaption>
                     <TableHeader>
                         <TableRow>
                             <TableHead>
@@ -253,7 +267,10 @@ const ExcelUpload = () => {
                                 />
                             </TableHead>
                             {tableHeaders.map((item, index) => (
-                                <TableHead key={index}>
+                                <TableHead
+                                    key={index}
+                                    className="text-center"
+                                >
                                     {item}
                                 </TableHead>
                             ))}
@@ -261,9 +278,15 @@ const ExcelUpload = () => {
                     </TableHeader>
                     <TableBody>
                         {orders.map((order) => {
-                            const isDuplicatedAddress = duplicatedAddresses.has(order.주소); // 주소가 중복된 주소인지 확인
+                            const isDuplicatedAddress = duplicatedAddresses.has(order.주소.trim());
+                            const price = order.정산대상금액;
+                            const formattedPrice = price.toLocaleString('ko-KR');
+
                             return (
-                                <TableRow key={order.주문아이디}>
+                                <TableRow
+                                    key={order.주문아이디}
+                                    className="text-center"
+                                >
                                     <TableCell>
                                         <Input
                                             type="checkbox"
@@ -274,20 +297,18 @@ const ExcelUpload = () => {
                                     <TableCell>{order.상품아이디}</TableCell>
                                     <TableCell>{order.합배송아이디}</TableCell>
                                     <TableCell>{order.주문시점.toLocaleDateString()}</TableCell>
-                                    <TableCell>₩{order.정산대상금액}</TableCell>
+                                    <TableCell>{formattedPrice} ₩</TableCell>
                                     <TableCell>{order.수령인}</TableCell>
                                     <TableCell>{order.수량}</TableCell>
                                     <TableCell>{order.옵션}</TableCell>
                                     <TableCell>{order.수령인연락처}</TableCell>
                                     <TableCell>{order.우편번호}</TableCell>
-                                    <TableCell>{order.주소}
-                                        {isDuplicatedAddress ?
-                                            (
-                                                <span className="text-red-500 font-extrabold">(x2)</span>
-                                            ) : (
-                                                ''
-                                            )
-                                        }
+                                    <TableCell>
+                                        {isDuplicatedAddress ? (
+                                            <span className="text-red-500 font-extrabold">{order.주소}</span>
+                                        ) : (
+                                            <>{order.주소}</>
+                                        )}
                                     </TableCell>
                                     <TableCell>{order.공동현관비밀번호}</TableCell>
                                     <TableCell>{order.수령방법}</TableCell>
@@ -295,7 +316,7 @@ const ExcelUpload = () => {
                                     <TableCell>{order.상태}</TableCell>
                                     <TableCell className='flex gap-2'>
                                         <Select onValueChange={(value: Status) => updateOrderStatus(order.주문아이디, value)}>
-                                            <SelectTrigger className="w-[150px]">
+                                            <SelectTrigger className="w-[100px]">
                                                 <SelectValue placeholder={order.처리상태} />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -307,8 +328,7 @@ const ExcelUpload = () => {
                                     </TableCell>
                                 </TableRow>
                             )
-                        })
-                        }
+                        })}
                     </TableBody>
                 </Table>
             </section>
