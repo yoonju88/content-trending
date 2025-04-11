@@ -1,0 +1,1 @@
+export type Status = '대기중' | '처리중' | '완료';

@@ -1,6 +1,6 @@
 export interface DashboardItem {
     label: string;
-    value: number;
+    value: string | number;
     id: string;
 }
 
