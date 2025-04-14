@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import ExcelUpload from '@/components/uploadExcel/AlwaysExcelUpload'
+import ExcelUpload from '@/components/uploadExcel/common/ExcelUpload'
 import { Orders, tableHeaders } from '@/utils/alwaysData';
 
 const parseAlwaysExcel = (data: any[]): Orders[] => {

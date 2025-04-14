@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import CoupangExcelUpload from '@/components/uploadExcel/CoupangExcelUpload'
+import ExcelUpload from '@/components/uploadExcel/common/ExcelUpload'
 import { CoupangOrders, CoupangTableHeaders } from '@/utils/coupang';
 
 const parseCoupangExcel = (data: any[]): CoupangOrders[] => {
@@ -35,7 +35,6 @@ const parseCoupangExcel = (data: any[]): CoupangOrders[] => {
     })
 }
 
-
 export default function page() {
     const [orders, setOrders] = useState<CoupangOrders[]>([]);
 
@@ -44,7 +43,7 @@ export default function page() {
             <div className="flex items-center justify-between">
                 <h1 className="text-4xl text-foreground font-bold tracking-wide hover:text-primary transition-all duration-500">쿠팡 주문서 관리 </h1>
             </div>
-            <CoupangExcelUpload
+            <ExcelUpload
                 processExcelData={parseCoupangExcel}
                 orders={orders}
                 tableHeaders={CoupangTableHeaders}
