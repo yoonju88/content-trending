@@ -59,7 +59,7 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
                 // 중복 주소 처리
                 const addressMap = new Map<string, number>();
                 transformed.forEach((order) => {
-                    const address = (order as any).주소.trim();
+                    const address = (order as any).수취인주소.trim();
                     addressMap.set(address, (addressMap.get(address) || 0) + 1);
                 });
 
@@ -93,8 +93,8 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
         orderNumber: string,
         newStatus: Status
     ) => {
-        const updatedOrders = orders.map((order: any) =>
-            order.주문아이디 === orderNumber
+        const updatedOrders = ordersData.map((order: any) =>
+            order.주문번호 === orderNumber
                 ? { ...order, 상태: newStatus }
                 : order
         );
@@ -222,9 +222,11 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
                     </TableHeader>
                     <TableBody>
                         {ordersData.map((order: any, index: number) => {
-                            const isDuplicatedAddress = duplicatedAddresses.has(order.주소.trim());
-                            const price = order.정산대상금액 | order.결제액;
-                            const formattedPrice = price.toLocaleString('ko-KR');
+                            const isDuplicatedAddress = duplicatedAddresses.has(order.수취인주소.trim());
+                            const formattedPrice = (num: number) =>
+                                num.toLocaleString('ko-KR');
+                            const formatDate = (date: Date | string) =>
+                                new Date(date).toLocaleDateString('ko-KR');
                             return (
                                 <TableRow
                                     key={index}
@@ -236,33 +238,36 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
                                             className="order-checkbox"
                                         />
                                     </TableCell>
-                                    {tableHeaders.map((column, colIndex) => {
-                                        const value = order[column];  // 각 order에서 column명에 해당하는 값을 추출
-
-                                        // 중복된 주소일 경우
-                                        if (column === '주소' && isDuplicatedAddress) {
-                                            return (
-                                                <TableCell key={colIndex}>
-                                                    <span className="text-red-500 font-extrabold">{value}</span>
-                                                </TableCell>
-                                            );
-                                        }
-                                        // 정산대상금액, 결제액 처리
-                                        if (column === '정산대상금액' || column === '결제액') {
-                                            return (
-                                                <TableCell key={colIndex}>
-                                                    {formattedPrice} ₩
-                                                </TableCell>
-                                            );
-                                        }
-                                        return (
-                                            <TableCell key={colIndex}>{value}</TableCell>
-                                        );
-                                    })}
+                                    <TableCell>{order.번호}</TableCell>
+                                    <TableCell>{formatDate(order.주문시출고예정일)}</TableCell>
+                                    <TableCell>{order.주문번호}</TableCell>
+                                    <TableCell>{formatDate(order.주문일)}</TableCell>
+                                    <TableCell>{order.구매자}</TableCell>
+                                    <TableCell>{order.기타}</TableCell>
+                                    <TableCell>{formattedPrice(order.결제액)}  ₩</TableCell>
+                                    <TableCell>{formattedPrice(order.배송비)}  ₩</TableCell>
+                                    <TableCell>{order.구매수}</TableCell>
+                                    <TableCell>{order.등록옵션명}</TableCell>
+                                    <TableCell>{order.수취인이름}</TableCell>
+                                    <TableCell>{order.구매자전화번호}</TableCell>
+                                    <TableCell>{order.우편번호}</TableCell>
+                                    <TableCell>{isDuplicatedAddress ? (
+                                        <span className="text-red-500 font-extrabold">
+                                            {order.수취인주소}
+                                        </span>
+                                    ) : (
+                                        <>{order.수취인주소}</>
+                                    )}
+                                    </TableCell>
+                                    <TableCell>{order.배송메세지}</TableCell>
+                                    <TableCell>{order.결제위치}</TableCell>
+                                    <TableCell>{order.상태}</TableCell>
                                     <TableCell className='flex gap-2'>
-                                        <Select onValueChange={(value: Status) => updateOrderStatus(order.주문아이디, value)}>
+                                        <Select
+                                            value={order.상태}
+                                            onValueChange={(value: Status) => updateOrderStatus(order.주문번호, value)}>
                                             <SelectTrigger className="w-[100px]">
-                                                <SelectValue placeholder={order.처리상태} />
+                                                <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="대기중">대기중</SelectItem>

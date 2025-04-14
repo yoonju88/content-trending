@@ -1,6 +1,6 @@
 import { Status } from "./status";
 
-export interface Orders {
+export interface CoupangOrders {
     번호: string;
     주문시출고예정일: Date;
     주문번호: string;
@@ -8,21 +8,20 @@ export interface Orders {
     구매자: string;
     기타: string;
     결제액: number;
-    배송비: string;
-    구매수: string;
-    등록옵션명: number;
+    배송비: number;
+    구매수: number;
+    등록옵션명: string;
     수취인이름: string;
-    전화번호: string;
+    구매자전화번호: string;
     우편번호: string;
-    주소: string;
+    수취인주소: string;
     배송메세지: Status;
     결제위치: string;
     상태: Status;
     처리상태: string;
 
 }
-
-export const tableHeaders = [
+export const CoupangTableHeaders = [
     '번호',
     '주문시 출고 예정일',
     '주문번호',
@@ -31,15 +30,15 @@ export const tableHeaders = [
     '기타',
     '결제액',
     '배송비',
-    '구매 수량',
+    '구매수(수량)',
     '등록 옵션명',
     '수취인 이름',
-    '구매자 전화번호',
+    '구매자전화번호',
     '우편번호',
     '수취인 주소',
     '배송 메세지',
     '결제 위치',
     '상태',
-    '처리'
+    '처리 상태'
 ];
 
