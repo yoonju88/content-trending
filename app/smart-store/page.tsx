@@ -40,7 +40,7 @@ const parseSmartExcel = (data: SmartExcelOrders[]): SmartOrders[] => {
         };
         return {
             발송기한: item['발송기한'] ?
-                (typeof item['발송기한'] === 'string' ? new Date(item['발송기한']) : item['발송기한'])
+                (typeof item['발송기한'] === 'number' ? excelDateToJSDate(item['발송기한']) : new Date(item['발송기한']))
                 : new Date(),
             상품주문번호: item['상품주문번호'] || '',
             주문번호: item['주문번호'] || '',

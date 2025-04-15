@@ -28,7 +28,7 @@ export type CoupangExcelOrder = {
 const parseCoupangExcel = (data: CoupangExcelOrder[]): CoupangOrders[] => {
     return data.map((item: CoupangExcelOrder): CoupangOrders => {
         //구매수 출력하기 위한 코드 
-        const extractNumber = (value: any): number => {
+        const extractNumber = (value: string | number | undefined): number => {
             if (!value) return 0;
             const str = value.toString().trim();
             const match = str.match(/\d+/); // 첫 숫자만 추출
