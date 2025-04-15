@@ -14,7 +14,7 @@ type CoupangTableProps = {
 export default function CoupangTable({ ordersData, duplicatedAddresses, updateOrderStatus }: CoupangTableProps) {
     return (
         <TableBody>
-            {ordersData.map((order: any, index: number) => {
+            {ordersData.map((order: CoupangOrders, index: number) => {
                 const isDuplicatedAddress = duplicatedAddresses.has(order.수취인주소.trim());
                 const formattedPrice = (num: number) =>
                     num.toLocaleString('ko-KR');

@@ -12,7 +12,7 @@ import {
 import { Moon, SunMedium } from 'lucide-react';
 
 export default function DarkMode() {
-    const { theme, resolvedTheme, setTheme } = useTheme();
+    const { setTheme } = useTheme();
 
     return (
         <DropdownMenu>

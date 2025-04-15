@@ -14,7 +14,7 @@ type AlwaysTableProps = {
 export default function AlwaysTable({ ordersData, duplicatedAddresses, updateOrderStatus }: AlwaysTableProps) {
     return (
         <TableBody>
-            {ordersData.map((order: any, index: number) => {
+            {ordersData.map((order: Orders, index: number) => {
                 const isDuplicatedAddress = duplicatedAddresses.has(order.주소.trim());
                 const price = order.정산대상금액
                 const formattedPrice = price.toLocaleString('ko-KR');

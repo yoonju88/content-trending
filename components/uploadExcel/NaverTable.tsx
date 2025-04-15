@@ -1,12 +1,12 @@
 import React from 'react'
-import { CoupangOrders } from '@/utils/coupang';
+import { NaverOrders } from '@/utils/naver';
 import { Status } from '@/utils/status';
 import { TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { StatusSelector } from "./common/StatusSelector";
 
 type CoupangTableProps = {
-    ordersData: CoupangOrders[];
+    ordersData: NaverOrders[];
     duplicatedAddresses: Set<string>;
     updateOrderStatus: (orderId: string, newStatus: Status) => void;
 };
@@ -14,8 +14,8 @@ type CoupangTableProps = {
 export default function CoupangTable({ ordersData, duplicatedAddresses, updateOrderStatus }: CoupangTableProps) {
     return (
         <TableBody>
-            {ordersData.map((order: any, index: number) => {
-                const isDuplicatedAddress = duplicatedAddresses.has(order.수취인주소.trim());
+            {ordersData.map((order: NaverOrders, index: number) => {
+                const isDuplicatedAddress = duplicatedAddresses.has(order.배송지.trim());
                 const formattedPrice = (num: number) =>
                     num.toLocaleString('ko-KR');
                 const formatDate = (date: Date | string) =>
@@ -39,8 +39,6 @@ export default function CoupangTable({ ordersData, duplicatedAddresses, updateOr
                         <TableCell>{order.구매자명}</TableCell>
                         <TableCell>{order.수량}</TableCell>
                         <TableCell>{order.옵션정보}</TableCell>
-                        <TableCell>{order.구매수}</TableCell>
-                        <TableCell>{order.등록옵션명}</TableCell>
                         <TableCell>{order.수취인명}</TableCell>
                         <TableCell>{order.구매자연락처}</TableCell>
                         <TableCell>{order.수취인연락처1}</TableCell>

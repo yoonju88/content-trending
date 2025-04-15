@@ -13,7 +13,9 @@ export default function ContinueWithGoogleButton() {
                 try {
                     await auth?.loginWithGoogle();
                     router.refresh();
-                } catch (e) { }
+                } catch (e) {
+                    console.log(e)
+                }
             }}
             className="w-full"
         >

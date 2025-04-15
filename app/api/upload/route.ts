@@ -36,7 +36,7 @@ export async function POST(req: Request) {
 
         try {
             // 비밀번호가 있는 엑셀 파일을 XlsxPopulate으로 읽기
-            const workbook = await XlsxPopulate.fromDataAsync(buffer, { password }) as any;
+            const workbook = await XlsxPopulate.fromDataAsync(buffer, { password });
 
             // 첫 번째 시트 읽기
             const sheet = workbook.sheet(0);
@@ -59,13 +59,13 @@ export async function POST(req: Request) {
             rows.shift();
             const [rawHeaders, ...dataRows] = rows;
             // 헤더 정제
-            const headers = rawHeaders.map((h: any) =>
+            const headers = rawHeaders.map((h) =>
                 typeof h === 'string' ? h.trim() : (h?.toString()?.trim() || '')
             );
 
             // 데이터를 JSON 형식으로 변환
-            const jsonData = dataRows.map((row: any[]) => {
-                const obj: Record<string, any> = {};
+            const jsonData = dataRows.map((row: string[]) => {
+                const obj: Record<string, string> = {};
                 headers.forEach((header: string, index: number) => {
                     obj[header] = row[index];
                 });
@@ -78,16 +78,10 @@ export async function POST(req: Request) {
                 message: '엑셀 파일 처리 성공',
                 data: jsonData,
             });
-        } catch (error: any) {
+        } catch (error) {
             console.error('엑셀 파일 읽기 오류:', error);
-            if (error.message.includes('password')) {
-                return NextResponse.json(
-                    { success: false, message: '비밀번호가 틀렸습니다.' },
-                    { status: 400 }
-                );
-            }
             return NextResponse.json(
-                { success: false, message: '엑셀 파일을 읽을 수 없습니다.' },
+                { success: false, message: '비밀번호가 틀렸습니다.' },
                 { status: 400 }
             );
         }
