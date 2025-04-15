@@ -9,8 +9,6 @@ import { ExcelFileUploader } from './ExcelFileUploader';
 import { OrderActions } from './OrderActions';
 import TableHeads from './TableHeads'
 import { usePathname } from 'next/navigation';
-import AlwaysTable from '../AlwaysTable';
-import CoupangTable from '../CoupangTable';
 import NaverTable from '../NaverTable';
 import SmartStoreTable from '../SmartStoreTable';
 import { Button } from '@/components/ui/button';
@@ -21,11 +19,9 @@ type ExcelUploadProps<T> = {
     orders: T[];
     tableHeaders: string[];
 }
-type Path = '/always' | '/coupang' | '/naver' | '/smart-store';
+type Path = '/naver' | '/smart-store';
 
 const pathToComponent: Record<Path, React.ComponentType<any>> = {
-    '/always': AlwaysTable,
-    '/coupang': CoupangTable,
     '/naver': NaverTable,
     '/smart-store': SmartStoreTable,
 };

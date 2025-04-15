@@ -12,15 +12,13 @@ import TableHeads from './TableHeads'
 import { usePathname } from 'next/navigation';
 import AlwaysTable from '../AlwaysTable';
 import CoupangTable from '../CoupangTable';
-import NaverTable from '../NaverTable';
-import SmartStoreTable from '../SmartStoreTable';
 
 type ExcelUploadProps<T> = {
     processExcelData: (data: any[]) => T[]
     orders: T[];
     tableHeaders: string[];
 }
-type Path = '/always' | '/coupang' | '/naver' | '/smart-store';
+type Path = '/always' | '/coupang';
 
 const pathToComponent: Record<Path, React.ComponentType<any>> = {
     '/always': AlwaysTable,
