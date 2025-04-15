@@ -1,6 +1,7 @@
 'use client'
 import ExcelUpload from '@/components/uploadExcel/common/ExcelUpload'
 import { Orders, tableHeaders } from '@/utils/alwaysData';
+import { Status } from '@/utils/status';
 
 type alwaysExcelOrder = {
     주문아이디?: string;
@@ -18,14 +19,15 @@ type alwaysExcelOrder = {
     '수령 방법'?: string;
     운송장번호?: string;
     상태?: string;
+    처리상태: string;
 };
 
 const parseAlwaysExcel = (data: alwaysExcelOrder[]): Orders[] => {
-    return data.map((item: any) => ({
+    return data.map((item: alwaysExcelOrder): Orders => ({
         주문아이디: item['주문아이디'] || '',
         상품아이디: item['상품아이디'] || '',
         합배송아이디: item['합배송아이디'] || '',
-        주문시점: new Date(item['주문 시점']) || new Date(),
+        주문시점: new Date(item['주문 시점'] ?? new Date()),
         정산대상금액: Number(item['정산대상금액(수수료 제외)']) || 0,
         수령인: item['수령인'] || '',
         수량: Number(item['수량']) || 0,
@@ -36,7 +38,7 @@ const parseAlwaysExcel = (data: alwaysExcelOrder[]): Orders[] => {
         공동현관비밀번호: item['공동현관 비밀번호'] || '',
         수령방법: item['수령 방법'] || '',
         운송장번호: item['운송장번호'] || '',
-        상태: item['상태'] || '대기중',
+        상태: (item['상태'] as Status) || '대기중',
         처리상태: '대기중'
     }))
 }
@@ -54,7 +56,7 @@ export default function page() {
             수량: 2,
             옵션: '블루',
             수령인연락처: '010-0000-0000',
-            우편번호: 12345,
+            우편번호: '12345',
             주소: '서울시 어딘가',
             공동현관비밀번호: '1234',
             수령방법: '문앞',

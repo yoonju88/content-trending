@@ -1,7 +1,7 @@
 'use client'
-import React, { useState } from 'react'
 import ExcelUploadByPassword from '@/components/uploadExcel/common/ExcelUploadByPassword'
 import { SmartOrders, SmartTableHeaders } from '@/utils/smart-store';
+import { Status } from '@/utils/status';
 
 type SmartExcelOrders = {
     발송기한?: string | Date;
@@ -18,15 +18,15 @@ type SmartExcelOrders = {
     우편번호?: string | number;
     통합배송지?: string;
     배송메세지?: string;
-    매출연동수수료유입경로?: string;
+    '매출연동수수료 유입경로'?: string;
     상태?: string;
 };
 
 
 const parseSmartExcel = (data: SmartExcelOrders[]): SmartOrders[] => {
-    return data.map((item: any) => {
+    return data.map((item: SmartExcelOrders): SmartOrders => {
         //구매수 출력하기 위한 코드 
-        const extractNumber = (value: any): number => {
+        const extractNumber = (value: string | number | undefined): number => {
             if (!value) return 0;
             const str = value.toString().trim();
             const match = str.match(/\d+/); // 첫 숫자만 추출
@@ -39,10 +39,13 @@ const parseSmartExcel = (data: SmartExcelOrders[]): SmartOrders[] => {
             return epoch;
         };
         return {
-            발송기한: item['발송기한'] ? excelDateToJSDate(item['발송기한']) : new Date(),
+            발송기한: item['발송기한'] ?
+                (typeof item['발송기한'] === 'string' ? new Date(item['발송기한']) : item['발송기한'])
+                : new Date(),
             상품주문번호: item['상품주문번호'] || '',
             주문번호: item['주문번호'] || '',
-            결제일: item['결제일'] ? excelDateToJSDate(item['결제일']) : new Date(),
+            결제일: item['결제일'] ? (typeof item['결제일'] === 'string' ? new Date(item['결제일']) : item['결제일'])
+                : new Date(),
             정산예정금액: Number(item['정산예정금액']) || 0,
             구매자명: item['구매자명'] || '',
             수취인명: item['수취인명'] || '',
@@ -54,7 +57,7 @@ const parseSmartExcel = (data: SmartExcelOrders[]): SmartOrders[] => {
             통합배송지: item['통합배송지'] || '',
             배송메세지: item['배송메세지'] || '',
             매출연동수수료유입경로: item['매출연동수수료 유입경로'] || '',
-            상태: item['상태'] ? item['상태'] : '대기중',
+            상태: (item['상태'] as Status) || '대기중',
             처리상태: '대기중'
         }
     })

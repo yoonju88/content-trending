@@ -10,7 +10,7 @@ export interface Orders {
     수량: number;
     옵션: string;
     수령인연락처: string;
-    우편번호: number;
+    우편번호: string;
     주소: string;
     공동현관비밀번호: string;
     수령방법: string;

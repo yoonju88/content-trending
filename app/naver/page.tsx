@@ -1,6 +1,7 @@
 'use client'
 import ExcelUpload from '@/components/uploadExcel/common/ExcelUploadByPassword'
 import { NaverOrders, NaverTableHeaders } from '@/utils/naver';
+import { Status } from '@/utils/status';
 
 type NaverExcelOrder = {
     상품주문번호?: string;
@@ -20,9 +21,9 @@ type NaverExcelOrder = {
 };
 
 const parseNaverExcel = (data: NaverExcelOrder[]): NaverOrders[] => {
-    return data.map((item: any) => {
+    return data.map((item: NaverExcelOrder): NaverOrders => {
         //구매수 출력하기 위한 코드 
-        const extractNumber = (value: any): number => {
+        const extractNumber = (value: string | number | undefined): number => {
             if (!value) return 0;
             const str = value.toString().trim();
             const match = str.match(/\d+/); // 첫 숫자만 추출
@@ -30,8 +31,8 @@ const parseNaverExcel = (data: NaverExcelOrder[]): NaverOrders[] => {
         };
         return {
             상품주문번호: item['상품주문번호'] || '',
-            결제일: new Date(item['결제일']) || new Date(),
-            배송완료일: new Date(item['배송완료일']) || new Date(),
+            결제일: new Date(item['결제일'] ?? new Date()),
+            배송완료일: new Date(item['배송완료일'] ?? new Date()),
             최종상품별총주문금액: Number(item['최종상품별총주문금액']) || 0,
             배송비합계: Number(item['배송비합계']) || 0,
             구매자명: item['구매자명'] || '',
@@ -42,7 +43,7 @@ const parseNaverExcel = (data: NaverExcelOrder[]): NaverOrders[] => {
             수취인연락처1: item['수취인연락처1'] || "정보없음",
             우편번호: item['우편번호']?.toString() || '',
             배송지: item['배송지'] || '',
-            상태: item['상태'] || '대기중',
+            상태: (item['상태'] as Status) || '대기중',
             처리상태: '대기중'
         }
     })

@@ -1,8 +1,9 @@
 'use client'
 import ExcelUpload from '@/components/uploadExcel/common/ExcelUpload'
 import { CoupangOrders, CoupangTableHeaders } from '@/utils/coupang';
+import { Status } from '@/utils/status';
 
-export type CoupangExcelRawOrder = {
+export type CoupangExcelOrder = {
     번호?: string;
     '주문시 출고예정일'?: string | Date;
     주문번호?: string;
@@ -24,8 +25,8 @@ export type CoupangExcelRawOrder = {
     상태?: string;
 };
 
-const parseCoupangExcel = (data: CoupangExcelRawOrder[]): CoupangOrders[] => {
-    return data.map((item: any) => {
+const parseCoupangExcel = (data: CoupangExcelOrder[]): CoupangOrders[] => {
+    return data.map((item: CoupangExcelOrder): CoupangOrders => {
         //구매수 출력하기 위한 코드 
         const extractNumber = (value: any): number => {
             if (!value) return 0;
@@ -35,9 +36,9 @@ const parseCoupangExcel = (data: CoupangExcelRawOrder[]): CoupangOrders[] => {
         };
         return {
             번호: item['번호'] || '',
-            주문시출고예정일: new Date(item['주문시 출고예정일']) || new Date(),
+            주문시출고예정일: new Date(item['주문시 출고예정일'] ?? new Date()),
             주문번호: item['주문번호'] || '',
-            주문일: new Date(item['주문일']) || new Date(),
+            주문일: new Date(item['주문일'] ?? new Date()),
             구매자: item['구매자'] || '',
             기타: item['기타'] || '',
             결제액: Number(item['결제액']) || 0,
@@ -50,7 +51,7 @@ const parseCoupangExcel = (data: CoupangExcelRawOrder[]): CoupangOrders[] => {
             수취인주소: item['수취인 주소'] || '',
             배송메세지: item['배송메세지'] || '',
             결제위치: item['결제위치'] || '',
-            상태: item['상태'] || '대기중',
+            상태: (item['상태'] as Status) || '대기중',
             처리상태: '대기중'
         }
     })
