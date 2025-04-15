@@ -13,23 +13,20 @@ const parseNaverExcel = (data: any[]): NaverOrders[] => {
             return match ? Number(match[0]) : 0;
         };
         return {
-            번호: item['번호'] || '',
-            주문시출고예정일: new Date(item['주문시 출고예정일']) || new Date(),
-            주문번호: item['주문번호'] || '',
-            주문일: new Date(item['주문일']) || new Date(),
-            구매자: item['구매자'] || '',
-            기타: item['기타'] || '',
-            결제액: Number(item['결제액']) || 0,
-            배송비: Number(item['배송비']) || 0,
-            구매수: extractNumber(item['구매수(수량)'] || item['수량'] || item['구매수']),
-            등록옵션명: item['등록 옵션명'] || '정보없음',
-            수취인이름: item['수취인이름'] || '',
-            구매자전화번호: item['구매자전화번호'] || "정보없음",
+            상품주문번호: item['상품주문번호'] || '',
+            결제일: new Date(item['결제일']) || new Date(),
+            배송완료일: new Date(item['배송완료일']) || new Date(),
+            최종상품별총주문금액: Number(item['최종상품별총주문금액']) || 0,
+            배송비합계: Number(item['배송비합계']) || 0,
+            구매자명: item['구매자명'] || '',
+            수량: extractNumber(item['수량']),
+            옵션정보: item['옵션정보'] || '정보없음',
+            수취인명: item['수취인명'] || '',
+            구매자연락처: item['구매자연락처'] || "정보없음",
+            수취인연락처1: item['수취인연락처1'] || "정보없음",
             우편번호: item['우편번호']?.toString() || '',
-            수취인주소: item['수취인 주소'] || '',
-            배송메세지: item['배송메세지'] || '',
-            결제위치: item['결제위치'] || '',
-            상태: item['상태'] ? item['상태'] : '대기중',
+            배송지: item['배송지'] || '',
+            상태: item['상태'] || '대기중',
             처리상태: '대기중'
         }
     })

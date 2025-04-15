@@ -55,8 +55,6 @@ export default function NavBar() {
         // pathname이 href로 시작하는지 확인 (서브 경로도 포함)
         return pathname.startsWith(href);
     };
-    console.log("isActive:", isActive)
-
 
     return (
         <header className="container mx-auto">

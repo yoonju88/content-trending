@@ -81,11 +81,11 @@ export default function AuthButtons() {
                             LogIn
                         </Link>
                     </Button>
-                    <Button variant="outline" >
+                    {/* <Button variant="outline" >
                         <Link href="/register" className="tracking-widest hover:text-primary">
                             SignUp
                         </Link>
-                    </Button>
+                    </Button> */}
                 </div>
             )}
         </>

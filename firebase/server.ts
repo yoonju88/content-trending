@@ -36,7 +36,6 @@ if (!currentApps.length) {
 }
 //설정된 firestore 객체를 모듈로 내보냄으로써 다른 파일에서 Firestore 데이터베이스를 사용할 수 있도록 합니다.
 export { firestore, auth }
-
 //Firestore에서 문서 개수를 조회하여 총 페이지 수를 계산하는 함수
 //Firebase Firestore에서 데이터를 조회하는 작업을 수행하기 때문에, 클라이언트가 직접 Firestore에 접근하는 것을 방지하고 보안을 강화하기 위해 서버에서 실행
 export const getTotalPages = async (firestoreQuery: FirebaseFirestore.Query<

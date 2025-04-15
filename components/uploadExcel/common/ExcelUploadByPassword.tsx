@@ -191,7 +191,7 @@ const ExcelUploadByPassword = <T extends {}>({ processExcelData, orders, tableHe
     ) => {
         const updatedOrders = ordersData.map((order: any) => {
             const isMatched =
-                order.주문번호 === orderNumber || order.주문아이디 === orderNumber;
+                order.상품주문번호 === orderNumber;
             return isMatched ? { ...order, 상태: newStatus } : order;
         });
 

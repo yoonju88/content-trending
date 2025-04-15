@@ -1,13 +1,13 @@
 import { Status } from "./status";
 
-export interface Orders {
+export interface NaverOrders {
     상품주문번호: string;
     결제일: Date;
     배송완료일: Date;
     최종상품별총주문금액: number;
     배송비합계: number;
     구매자명: string;
-    수량: string;
+    수량: number;
     옵션정보: string;
     수취인명: string;
     구매자연락처: string;
@@ -19,7 +19,7 @@ export interface Orders {
 
 }
 
-export const tableHeaders = [
+export const NaverTableHeaders = [
     '상품주문번호',
     '결제일',
     '배송완료일',
@@ -34,5 +34,5 @@ export const tableHeaders = [
     '우편번호',
     '배송지',
     '상태',
-    '처리'
+    '처리 상태'
 ];
