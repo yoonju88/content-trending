@@ -33,14 +33,12 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
     const path = rawPath as Path;
     const SelectedTBody = pathToComponent[path] || null;
 
-    const [loading, setLoading] = useState(false);
     const [ordersData, setOrdersData] = useState<T[]>([]);
     const [dashboardData, setDashboardData] = useState(InitialDashboardItems);
     const [duplicatedAddresses, setDuplicatedAddresses] = useState<Set<string>>(new Set());
 
     // Handle file upload and parse Excel data
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLoading(true);
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
             const fileExtension = file.name.split('.').pop();
@@ -72,7 +70,6 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
                     if (count > 1) duplicatedAddresses.add(address);
                 });
                 setDuplicatedAddresses(duplicatedAddresses);
-                setLoading(false);
             }
             reader.readAsArrayBuffer(file);
         }
@@ -165,43 +162,6 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
             alert('복사에 실패했습니다.');
         })
     }
-
-    const checkIfPasswordProtected = async (file: File) => {
-        try {
-            setLoading(true);
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('password', ''); // 빈 비밀번호로 시도
-
-            const response = await fetch('/api/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-
-            if (!data.success) {
-                if (data.message.includes('비밀번호')) {
-                    setShowPasswordForm(true);
-                    return;
-                }
-                throw new Error(data.message);
-            }
-
-            // 이메일 검증
-            const userEmail = session?.user?.email;
-            if (!userEmail || !config.adminEmails.includes(userEmail)) {
-                throw new Error('관리자만 파일을 업로드할 수 있습니다.');
-            }
-
-            setOrdersData(data.data);
-        } catch (error) {
-            console.error('파일 처리 오류:', error);
-            alert(error instanceof Error ? error.message : '파일 처리 중 오류가 발생했습니다.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="flex flex-col space-y-14">

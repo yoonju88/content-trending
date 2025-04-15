@@ -56,7 +56,7 @@ export default function CoupangTable({ ordersData, duplicatedAddresses, updateOr
                         <TableCell className='flex gap-2'>
                             <StatusSelector
                                 value={order.상태}
-                                onValueChange={(value: Status) => updateOrderStatus(order.주문번호, value)}
+                                onValueChange={(value: Status) => updateOrderStatus(order.상품주문번호, value)}
                             />
                         </TableCell>
                     </TableRow>

@@ -1,9 +1,25 @@
 'use client'
-import React, { useState } from 'react'
 import ExcelUpload from '@/components/uploadExcel/common/ExcelUploadByPassword'
 import { NaverOrders, NaverTableHeaders } from '@/utils/naver';
 
-const parseNaverExcel = (data: any[]): NaverOrders[] => {
+type NaverExcelOrder = {
+    상품주문번호?: string;
+    결제일?: string | Date;
+    배송완료일?: string | Date;
+    최종상품별총주문금액?: string | number;
+    배송비합계?: string | number;
+    구매자명?: string;
+    수량?: string | number;
+    옵션정보?: string;
+    수취인명?: string;
+    구매자연락처?: string;
+    수취인연락처1?: string;
+    우편번호?: string | number;
+    배송지?: string;
+    상태?: string;
+};
+
+const parseNaverExcel = (data: NaverExcelOrder[]): NaverOrders[] => {
     return data.map((item: any) => {
         //구매수 출력하기 위한 코드 
         const extractNumber = (value: any): number => {
@@ -33,8 +49,25 @@ const parseNaverExcel = (data: any[]): NaverOrders[] => {
 }
 
 export default function page() {
-    const [orders, setOrders] = useState<NaverOrders[]>([]);
-
+    const orders: NaverOrders[] = [
+        {
+            상품주문번호: 'NAV001',
+            결제일: new Date('2025-04-20'),
+            배송완료일: new Date('2025-04-22'),
+            최종상품별총주문금액: 15000,
+            배송비합계: 2500,
+            구매자명: '정지훈',
+            수량: 2,
+            옵션정보: '블랙, L',
+            수취인명: '김태희',
+            구매자연락처: '010-9876-5432',
+            수취인연락처1: '010-1111-2222',
+            우편번호: '12345',
+            배송지: '서울특별시 강남구 논현동 123-45',
+            상태: '대기중',
+            처리상태: '대기중'
+        },
+    ]
     return (
         <div className="container flex flex-col gap-16">
             <div className="flex items-center justify-between">

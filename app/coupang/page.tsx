@@ -1,9 +1,30 @@
 'use client'
-import React, { useState } from 'react'
 import ExcelUpload from '@/components/uploadExcel/common/ExcelUpload'
 import { CoupangOrders, CoupangTableHeaders } from '@/utils/coupang';
 
-const parseCoupangExcel = (data: any[]): CoupangOrders[] => {
+export type CoupangExcelRawOrder = {
+    번호?: string;
+    '주문시 출고예정일'?: string | Date;
+    주문번호?: string;
+    주문일?: string | Date;
+    구매자?: string;
+    기타?: string;
+    결제액?: string | number;
+    배송비?: string | number;
+    '구매수(수량)'?: string | number;
+    수량?: string | number;
+    구매수?: string | number;
+    등록옵션명?: string;
+    수취인이름?: string;
+    구매자전화번호?: string;
+    우편번호?: string | number;
+    '수취인 주소'?: string;
+    배송메세지?: string;
+    결제위치?: string;
+    상태?: string;
+};
+
+const parseCoupangExcel = (data: CoupangExcelRawOrder[]): CoupangOrders[] => {
     return data.map((item: any) => {
         //구매수 출력하기 위한 코드 
         const extractNumber = (value: any): number => {
@@ -36,7 +57,28 @@ const parseCoupangExcel = (data: any[]): CoupangOrders[] => {
 }
 
 export default function page() {
-    const [orders, setOrders] = useState<CoupangOrders[]>([]);
+    const orders: CoupangOrders[] = [
+        {
+            번호: '001',
+            주문시출고예정일: new Date('2025-04-20'),
+            주문번호: 'ORD12345',
+            주문일: new Date('2025-04-10'),
+            구매자: '김철수',
+            기타: '특별 요청 없음',
+            결제액: 10000,
+            배송비: 2500,
+            구매수: 3,
+            등록옵션명: '블루, M',
+            수취인이름: '홍길동',
+            구매자전화번호: '010-1234-5678',
+            우편번호: '12345', // 문자열로 할당
+            수취인주소: '서울특별시 강남구 테헤란로 123',
+            배송메세지: '배송 시 연락 주세요',
+            결제위치: '온라인',
+            상태: '대기중',
+            처리상태: '대기중'
+        },
+    ];
 
     return (
         <div className="container flex flex-col gap-16">

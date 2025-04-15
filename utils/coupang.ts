@@ -15,7 +15,7 @@ export interface CoupangOrders {
     구매자전화번호: string;
     우편번호: string;
     수취인주소: string;
-    배송메세지: Status;
+    배송메세지: string;
     결제위치: string;
     상태: Status;
     처리상태: string;

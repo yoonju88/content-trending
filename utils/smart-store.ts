@@ -12,7 +12,7 @@ export interface SmartOrders {
     옵션정보: string;
     구매자연락처: string;
     수취인연락처1: string;
-    우편번호: number;
+    우편번호: string;
     통합배송지: string;
     배송메세지: string;
     매출연동수수료유입경로: string;
