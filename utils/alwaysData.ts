@@ -35,6 +35,6 @@ export const tableHeaders = [
     '수령방법',
     '운송장번호',
     '상태',
-    '처리상태'
+    '처리 상태'
 ];
 
