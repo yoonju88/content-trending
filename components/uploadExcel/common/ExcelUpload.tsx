@@ -1,3 +1,4 @@
+
 'use client'
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx'; // Excel 처리 라이브러리 : npm install xlsx
@@ -24,21 +25,22 @@ type Path = '/always' | '/coupang' | '/naver' | '/smart-store';
 const pathToComponent: Record<Path, React.ComponentType<any>> = {
     '/always': AlwaysTable,
     '/coupang': CoupangTable,
-    '/naver': NaverTable,
-    '/smart-store': SmartStoreTable,
+
 };
 
-const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: ExcelUploadProps<T>) => {
+const ExcelUpload = <T extends {}>({ processExcelData, tableHeaders }: ExcelUploadProps<T>) => {
     const rawPath = usePathname()
     const path = rawPath as Path;
     const SelectedTBody = pathToComponent[path] || null;
 
+    const [loading, setLoading] = useState(false);
     const [ordersData, setOrdersData] = useState<T[]>([]);
     const [dashboardData, setDashboardData] = useState(InitialDashboardItems);
     const [duplicatedAddresses, setDuplicatedAddresses] = useState<Set<string>>(new Set());
 
     // Handle file upload and parse Excel data
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLoading(true);
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
             const fileExtension = file.name.split('.').pop();
@@ -70,6 +72,7 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
                     if (count > 1) duplicatedAddresses.add(address);
                 });
                 setDuplicatedAddresses(duplicatedAddresses);
+                setLoading(false);
             }
             reader.readAsArrayBuffer(file);
         }
@@ -162,6 +165,7 @@ const ExcelUpload = <T extends {}>({ processExcelData, orders, tableHeaders }: E
             alert('복사에 실패했습니다.');
         })
     }
+
 
     return (
         <div className="flex flex-col space-y-14">
