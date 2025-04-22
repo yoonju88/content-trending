@@ -23,7 +23,6 @@ type Path = '/always' | '/coupang';
 const pathToComponent: Record<Path, React.ComponentType<any>> = {
     '/always': AlwaysTable,
     '/coupang': CoupangTable,
-
 };
 
 const ExcelUpload = <T extends {}>({ processExcelData, tableHeaders }: ExcelUploadProps<T>) => {
@@ -31,14 +30,12 @@ const ExcelUpload = <T extends {}>({ processExcelData, tableHeaders }: ExcelUplo
     const path = rawPath as Path;
     const SelectedTBody = pathToComponent[path] || null;
 
-    const [loading, setLoading] = useState(false);
     const [ordersData, setOrdersData] = useState<T[]>([]);
     const [dashboardData, setDashboardData] = useState(InitialDashboardItems);
     const [duplicatedAddresses, setDuplicatedAddresses] = useState<Set<string>>(new Set());
 
     // Handle file upload and parse Excel data
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLoading(true);
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
             const fileExtension = file.name.split('.').pop();
@@ -55,7 +52,7 @@ const ExcelUpload = <T extends {}>({ processExcelData, tableHeaders }: ExcelUplo
                 const workbook = XLSX.read(data, { type: "array" });
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                const transformed: T[] = processExcelData(jsonData);
+                const transformed: T[] = processExcelData(jsonData as Record<string, unknown>[]);
                 setOrdersData(transformed);
                 updateDashboard(transformed);
                 // 중복 주소 처리
@@ -70,7 +67,6 @@ const ExcelUpload = <T extends {}>({ processExcelData, tableHeaders }: ExcelUplo
                     if (count > 1) duplicatedAddresses.add(address);
                 });
                 setDuplicatedAddresses(duplicatedAddresses);
-                setLoading(false);
             }
             reader.readAsArrayBuffer(file);
         }
