@@ -44,7 +44,7 @@ const parseSmartExcel = (data: SmartExcelOrders[]): SmartOrders[] => {
                 : new Date(),
             상품주문번호: item['상품주문번호'] || '',
             주문번호: item['주문번호'] || '',
-            결제일: item['결제일'] ? (typeof item['결제일'] === 'string' ? new Date(item['결제일']) : item['결제일'])
+            결제일: item['결제일'] ? (typeof item['결제일'] === 'number' ? excelDateToJSDate(item['결제일']) : new Date(item['결제일']))
                 : new Date(),
             정산예정금액: Number(item['정산예정금액']) || 0,
             구매자명: item['구매자명'] || '',

@@ -9,8 +9,15 @@ export async function middleware(request: NextRequest) {
     }
     const cookieStore = await cookies()
     const token = cookieStore.get("firebaseAuthToken")?.value
+
     // 로그인 페이지로 접근하는 경우, 토큰이 없으면 로그인 페이지를 계속 보여준다.
-    if (!token && request.nextUrl.pathname.startsWith("/login")) {
+    if (!token &&
+        request.nextUrl.pathname.startsWith("/login") ||
+        request.nextUrl.pathname.startsWith("/coupang") ||
+        request.nextUrl.pathname.startsWith("/always") ||
+        request.nextUrl.pathname.startsWith("/naver") ||
+        request.nextUrl.pathname.startsWith("/smart-store")
+    ) {
         return NextResponse.next()
     }
     //로그인 확인되면 홈페이지로 이동
