@@ -66,9 +66,9 @@ export default function page() {
         },
     ];
     return (
-        <div className="container flex flex-col gap-16">
+        <div className="container flex flex-col gap-16 mt-14 px-6">
             <div className="flex items-center justify-between">
-                <h1 className="text-4xl text-foreground font-bold tracking-wide hover:text-primary transition-all duration-500">올웨이즈 주문서 관리 </h1>
+                <h1 className="text-3xl sm:text-4xl text-foreground font-bold tracking-wide hover:text-primary transition-all duration-500">올웨이즈 주문서 관리 </h1>
             </div>
             <ExcelUpload
                 processExcelData={parseAlwaysExcel}

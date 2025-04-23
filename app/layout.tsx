@@ -25,7 +25,7 @@ export default function RootLayout({
         <Providers>
           <AuthProvider>
             <NavBar />
-            <main className='container mx-auto min-h-screen relative  flex items-center justify-center'>
+            <main className='container mx-auto min-h-screen relative flex items-center justify-center'>
               {children}
             </main>
             <footer className="container mx-auto text-center mt-20 bg-primary p-6">

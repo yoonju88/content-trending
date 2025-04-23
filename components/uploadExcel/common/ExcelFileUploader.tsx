@@ -18,7 +18,7 @@ export const ExcelFileUploader = ({ onFileChange }: ExcelFileUploaderProps) => {
             <Button
                 variant="default"
                 size="lg"
-                className="text-base"
+                className="text-sm sm:text-base "
                 onClick={() => document.getElementById('excelFile')?.click()}
             >
                 엑셀 파일 불러오기

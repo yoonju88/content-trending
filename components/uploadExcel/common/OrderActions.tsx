@@ -13,6 +13,7 @@ export const OrderActions = ({ onCopySelected, onCopyAll }: OrderActionsProps) =
                 variant="default"
                 size="lg"
                 type="button"
+                className="text-sm sm:text-base"
             >
                 선택한 주문 복사
             </Button>
@@ -21,6 +22,7 @@ export const OrderActions = ({ onCopySelected, onCopyAll }: OrderActionsProps) =
                 variant="default"
                 size="lg"
                 type="button"
+                className="text-sm sm:text-base"
             >
                 전체 주문 복사
             </Button>

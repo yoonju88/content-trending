@@ -13,8 +13,10 @@ interface UnderlineState {
 }
 
 export default function NavBar() {
+
     const pathname = usePathname() // Current page path
     const [underline, setUnderline] = useState<UnderlineState>({ width: 0, left: 0 })
+
 
     useEffect(() => {
         const activeLink = document.querySelector<HTMLElement>(`[data-active="true"]`);
@@ -58,7 +60,7 @@ export default function NavBar() {
 
     return (
         <header className="container mx-auto">
-            <div className="flex flex-wrap p-5 flex-col md:flex-row items-center justify-between">
+            <div className="flex flex-wrap p-5 flex-col md:flex-row gap-8 items-center justify-between">
                 <h1 className="flex title-font font-medium items-center text-3xl text-foreground hover:text-primary transition-all duration-500">
                     <Link href='/'>
                         Tasty Auto System
@@ -83,7 +85,8 @@ export default function NavBar() {
                         <Link
                             key={link.label}
                             href={link.href}
-                            className={`text-foreground text-opacity-80 text-lg p-1 cursor-pointer hover:font-bold uppercase transition-all duration-500  hover:text-primary ${isActive(link.href) ? "font-bold text-primary" : "font-medium"
+                            className={`text-foreground text-opacity-80 text-xs sm:text-lg p-1 cursor-pointer uppercase 
+                                hover:font-bold transition-all duration-500  hover:text-primary ${isActive(link.href) ? "font-bold text-primary" : "font-medium"
                                 }`}
                             data-active={isActive(link.href)}
                             onMouseEnter={handleMouseEnter}

@@ -13,23 +13,23 @@ type DashboardProps = {
 
 export default function Dashboard({ data }: DashboardProps) {
     return (
-        <section>
-            <Card className=" group w-full p-10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500">
+        <section className="flex items-center justify-center">
+            <Card className="group w-full px-3 sm:px-10 py-10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500">
                 <CardHeader>
-                    <CardTitle className="text-3xl group-hover:text-primary">Dash Board</CardTitle>
+                    <CardTitle className="text-2xl sm:text-3xl group-hover:text-primary">Dash Board</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-4 space-x-12 text-center">
+                <CardContent className="grid lg:grid-cols-4 space-x-12 text-center grid-cols-2 gap-6">
                     {data.map((item) => {
                         return (
                             <Card
                                 key={item.id}
-                                className='border-none bg-muted-foreground/10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500'
+                                className='border-none w-full bg-muted-foreground/10 hover:shadow-muted-foreground hover:shadow-md transition-all duration-500'
                             >
                                 <CardHeader>
-                                    <CardTitle className="text-2xl">{item.label}</CardTitle>
+                                    <CardTitle className=" text-lg sm:text-2xl">{item.label}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <span className="text-xl">{item.value}</span>
+                                    <span className="text-lg sm:text-xl">{item.value}</span>
                                 </CardContent>
                             </Card>
                         )
